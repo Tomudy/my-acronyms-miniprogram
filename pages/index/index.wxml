@@ -7,15 +7,20 @@
     <text class="search-ph">搜索缩写 / 英文原词 / 中文释义</text>
   </view>
 
-  <!-- 统计展示区：紧贴搜索框正下方，与搜索框同宽、左右对齐、间距一致 -->
+  <!-- 统计展示区：紧贴搜索框正下方。
+       支持多含义后「缩写数」与「含义数」不再相等，两个都给，避免歧义。 -->
   <view class="stats-row">
     <view class="stat-card">
-      <text class="stat-card-num">{{stats.totalCount}}</text>
-      <text class="stat-card-label">已收录缩写</text>
+      <text class="stat-card-num">{{stats.abbrCount}}</text>
+      <text class="stat-card-label">缩写</text>
     </view>
     <view class="stat-card">
-      <text class="stat-card-num">{{stats.categoryCount}}</text>
-      <text class="stat-card-label">分类数量</text>
+      <text class="stat-card-num">{{stats.meaningCount}}</text>
+      <text class="stat-card-label">含义（含多义）</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-card-num">{{stats.industryCount}}</text>
+      <text class="stat-card-label">行业场景</text>
     </view>
     <view class="stat-card">
       <text class="stat-card-num stat-card-date">{{stats.lastUpdated}}</text>

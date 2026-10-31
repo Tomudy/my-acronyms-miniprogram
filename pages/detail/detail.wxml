@@ -11,10 +11,11 @@
     <view class="topbar-side"></view>
   </view>
 
-  <!-- 头部：大缩写 + 来源 -->
+  <!-- 头部：大缩写 + 行业 + 来源 -->
   <view class="hero">
     <view class="hero-row">
       <text class="hero-abbr">{{abbr || '新词条'}}</text>
+      <text class="badge badge-industry">{{industryName}}</text>
       <text class="badge {{sourceClass}}">{{sourceText}}</text>
     </view>
     <text class="hero-full">{{full || '填写英文原词'}}</text>
@@ -35,6 +36,11 @@
   <!-- 只读提示（内置词条） -->
   <view wx:if="{{isBuiltin}}" class="tip">
     <text class="tip-text">内置词条为只读，不能编辑或删除；需要的话可以新增一条自己的词条。</text>
+  </view>
+
+  <!-- 说明（只读模式下有内容才展示） -->
+  <view wx:if="{{!canEdit && note}}" class="hero-note">
+    <text class="hero-note-text">{{note}}</text>
   </view>
 
   <!-- 表单 -->
@@ -82,6 +88,23 @@
       />
     </view>
 
+    <!-- 行业 / 场景：可编辑时用胶囊单选，这是「同一缩写多含义」的唯一键之一 -->
+    <view wx:if="{{canEdit}}" class="field">
+      <text class="field-label">行业 / 场景<text class="field-hint">（换行业可再存一条含义）</text></text>
+      <scroll-view class="chips-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+        <view class="chips">
+          <view
+            wx:for="{{industryOptions}}"
+            wx:key="key"
+            class="chip {{item.key === industry ? 'chip-on' : ''}}"
+            hover-class="chip-hover"
+            data-key="{{item.key}}"
+            bindtap="onIndustryPick"
+          >{{item.name}}</view>
+        </view>
+      </scroll-view>
+    </view>
+
     <view class="field {{isBuiltin ? 'field-locked' : ''}}">
       <text class="field-label">创建者<text class="field-hint">（点一下填入微信昵称）</text></text>
       <!-- type="nickname"：微信官方「头像昵称填写能力」。
@@ -98,6 +121,55 @@
         maxlength="20"
       />
     </view>
+
+    <!-- 说明：可选，补充说明这个含义的用法与边界 -->
+    <view wx:if="{{canEdit}}" class="field">
+      <text class="field-label">说明<text class="field-hint">（选填，用法 / 例外）</text></text>
+      <textarea
+        class="field-textarea"
+        value="{{note}}"
+        bindinput="onNoteInput"
+        placeholder="例如：财务口径的 ROI 按年化计算"
+        placeholder-class="field-ph"
+        maxlength="200"
+        auto-height
+      />
+    </view>
+
+    <!-- 来源 / 出处：可选。字段名不能叫 source —— 那个已被「内置 / 自定义」占用 -->
+    <view wx:if="{{canEdit}}" class="field">
+      <text class="field-label">来源 / 出处<text class="field-hint">（选填）</text></text>
+      <input
+        class="field-input"
+        value="{{sourceRef}}"
+        bindinput="onRefInput"
+        placeholder="例如：公司术语表 v2.1"
+        placeholder-class="field-ph"
+        maxlength="60"
+      />
+    </view>
+  </view>
+
+  <!-- 同一个缩写的其他含义 -->
+  <view wx:if="{{others.length > 0}}" class="section">
+    <text class="section-title">「{{abbr}}」还有 {{others.length}} 个含义</text>
+    <view class="meaning-list">
+      <view
+        wx:for="{{others}}"
+        wx:key="id"
+        class="meaning-item"
+        hover-class="card-hover"
+        data-id="{{item.id}}"
+        bindtap="onOtherTap"
+      >
+        <view class="meaning-top">
+          <text class="badge badge-industry">{{item.industryText}}</text>
+          <text class="badge {{item.sourceText === '内置' ? 'badge-builtin' : 'badge-custom'}}">{{item.sourceText}}</text>
+        </view>
+        <text class="meaning-full">{{item.full}}</text>
+        <text class="meaning-zh">{{item.zh}}</text>
+      </view>
+    </view>
   </view>
 
   <!-- 元信息 -->
@@ -107,6 +179,14 @@
       <view class="meta-line">
         <text class="meta-key">来源</text>
         <text class="meta-val">{{sourceText}}</text>
+      </view>
+      <view class="meta-line">
+        <text class="meta-key">行业 / 场景</text>
+        <text class="meta-val">{{industryName}}</text>
+      </view>
+      <view wx:if="{{sourceRef}}" class="meta-line">
+        <text class="meta-key">来源 / 出处</text>
+        <text class="meta-val">{{sourceRef}}</text>
       </view>
       <view class="meta-line">
         <text class="meta-key">创建时间</text>

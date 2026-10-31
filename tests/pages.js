@@ -78,24 +78,24 @@ eq(index.data.hasFav, false, '0 时 hasFav 为 false（展示空状态）');
 ok(index.data.list === undefined, '首页不再持有任何列表数据');
 
 // —— 统计展示区（数据取自真实存储，不硬编码）
-eq(index.data.stats.totalCount, 149, '统计区：已收录缩写总数 = 149（内置条数）');
-eq(index.data.stats.categoryCount, 3, '统计区：分类数量 = 3（IT / 商务 / 日常）');
+eq(index.data.stats.abbrCount, 149, '统计区：缩写数 = 149（多义条目只算一个缩写）');
+eq(index.data.stats.meaningCount, 154, '统计区：含义数 = 154（同一缩写的多个含义各算一条）');
 ok(/^\d{4}-\d{2}-\d{2}$/.test(index.data.stats.lastUpdated),
   '统计区：最近更新时间为 YYYY-MM-DD：' + index.data.stats.lastUpdated);
 
 // —— 计数随收藏实时变化（模拟从搜索页/详情页收藏后返回）
 const store = require(path.join(ROOT, 'utils/storage.js'));
-store.toggleFav('b_api');
+store.toggleFav('b_api__it');
 index.onShow();
 eq(index.data.favCount, 1, '收藏 1 条后首页计数变为 1');
 eq(index.data.hasFav, true, 'hasFav 变为 true');
-store.toggleFav('b_5g');
+store.toggleFav('b_5g__it');
 index.onShow();
 eq(index.data.favCount, 2, '再收藏 1 条后计数变为 2');
-store.toggleFav('b_api');
+store.toggleFav('b_api__it');
 index.onShow();
 eq(index.data.favCount, 1, '取消收藏后计数回到 1');
-store.toggleFav('b_5g');
+store.toggleFav('b_5g__it');
 index.onShow();
 eq(index.data.favCount, 0, '全部取消后计数回到 0');
 eq(index.data.hasFav, false, '回到 0 时重新展示空状态');
@@ -194,8 +194,8 @@ search.onSort({ currentTarget: { dataset: { by: 'letter' } } });
 eq(search.data.sortBy, 'letter', '切回按字母排序');
 
 // —— 跳转详情 / 返回
-search.onItemTap({ currentTarget: { dataset: { id: 'b_api' } } });
-ok(global.__lastNav.indexOf('/pages/detail/detail?id=b_api') >= 0, '点击词条进入详情页：' + global.__lastNav);
+search.onItemTap({ currentTarget: { dataset: { id: 'b_api__it' } } });
+ok(global.__lastNav.indexOf('/pages/detail/detail?id=b_api__it') >= 0, '点击词条进入详情页：' + global.__lastNav);
 global.__backCount = 0;
 search.onBack();
 eq(global.__backCount, 1, '点「取消」返回上一页');
@@ -205,7 +205,7 @@ section('【详情页】内置只读 / 新增 / 编辑 / 删除');
 
 // —— 内置词条只读
 const dView = loadPage('pages/detail/detail');
-dView.onLoad({ mode: 'view', id: 'b_api' });
+dView.onLoad({ mode: 'view', id: 'b_api__it' });
 eq(dView.data.abbr, 'API', '内置词条内容加载正确');
 eq(dView.data.isBuiltin, true, '标记为内置');
 eq(dView.data.canEdit, false, '内置词条不可编辑');
@@ -276,8 +276,10 @@ eq(global.__backCount, 0, '选择「继续编辑」时不返回');
 // —— 新增词条后统计区同步变化（真实数据源刷新）
 const idxStats = loadPage('pages/index/index');
 idxStats.onLoad();
-eq(idxStats.data.stats.totalCount, 150, '新增 1 条后统计总数变为 150');
-eq(idxStats.data.stats.categoryCount, 4, '自定义词条分类计入后分类数变为 4');
+eq(idxStats.data.stats.meaningCount, 155, '新增 1 条后含义数变为 155');
+eq(idxStats.data.stats.abbrCount, 150, '新增 1 条后缩写数变为 150');
+eq(idxStats.data.stats.industryCount >= 5, true,
+  '行业数量取自真实数据（' + idxStats.data.stats.industryCount + '）');
 eq(idxStats.data.stats.lastUpdated, store.todayStr(),
   '最近更新时间随自定义词条的修改时间变化：' + idxStats.data.stats.lastUpdated);
 
@@ -286,7 +288,7 @@ section('【收藏页】收藏列表 / 取消收藏');
 // 先在搜索页收藏两条
 const idx2 = loadPage('pages/search/search');
 idx2.onLoad({});
-idx2.onToggleFav({ currentTarget: { dataset: { id: 'b_api' } } });
+idx2.onToggleFav({ currentTarget: { dataset: { id: 'b_api__it' } } });
 idx2.onToggleFav({ currentTarget: { dataset: { id: userList[0].id } } });
 
 const fav = loadPage('pages/favorite/favorite');
@@ -312,7 +314,7 @@ eq(global.__lastSwitch, '/pages/index/index', '无上级页面时「返回」切
 eq(global.__backCount, 0, '无上级时不调用 navigateBack');
 global.getCurrentPages = () => [1, 2]; // 还原
 
-fav.onToggleFav({ currentTarget: { dataset: { id: 'b_api' } } });
+fav.onToggleFav({ currentTarget: { dataset: { id: 'b_api__it' } } });
 eq(fav.data.list.length, 1, '取消收藏后条目移除');
 eq(global.__lastToast, '已取消收藏', '取消收藏有反馈');
 eq(mem['ma_fav_v1'].length, 1, '收藏存储同步减少');
@@ -391,6 +393,61 @@ dNick2.onSave();
 const anon = mem['ma_user_v1'].filter((x) => x.abbr === 'ANON')[0];
 eq(anon.creator, '匿名用户', '未填写/未授权时创建者兜底为「匿名用户」');
 eq(profile.getNickname(), '张小明', '兜底文案不会覆盖已缓存的真实昵称');
+
+/* ================= 一对多：行业选择 / 其他含义 / 重复提示 ================= */
+section('【一对多】行业选择 / 其他含义 / 冲突提示');
+
+// —— 内置多义词详情页：显示行业 + 其他含义
+const dMulti = loadPage('pages/detail/detail');
+dMulti.onLoad({ mode: 'view', id: 'b_api__it' });
+eq(dMulti.data.industry, 'it', '详情页回填行业 key');
+eq(dMulti.data.industryName, 'IT / 互联网', '详情页展示行业名');
+ok(dMulti.data.others.length === 1, '列出同缩写的其他含义（' + dMulti.data.others.length + ' 条）');
+eq(dMulti.data.others[0].id, 'b_api__medical', '另一个含义是医药行业的 API');
+dMulti.onOtherTap({ currentTarget: { dataset: { id: 'b_api__medical' } } });
+ok(global.__lastNav.indexOf('detail?id=b_api__medical') >= 0, '点另一个含义跳到它的详情页');
+
+const dMedical = loadPage('pages/detail/detail');
+dMedical.onLoad({ mode: 'view', id: 'b_api__medical' });
+ok(dMedical.data.note.indexOf('活性成分') > 0, '只读模式能看到说明文字：' + dMedical.data.note);
+eq(dMedical.data.others[0].industryText, 'IT / 互联网', '反向也能看到 IT 含义');
+
+// —— 新增页：行业胶囊选择
+const dInd = loadPage('pages/detail/detail');
+dInd.onLoad({ mode: 'add' });
+ok(dInd.data.industryOptions.length >= 10, '新增页给出行业选项（' + dInd.data.industryOptions.length + ' 个）');
+eq(dInd.data.industry, 'general', '默认行业为「通用」');
+dInd.onIndustryPick({ currentTarget: { dataset: { key: 'finance' } } });
+eq(dInd.data.industry, 'finance', '点胶囊切换行业');
+eq(dInd.data.industryName, '金融 / 财税', '行业展示名同步刷新');
+eq(dInd.isDirty(), true, '换行业后表单算已修改（会被「放弃编辑」拦截）');
+
+// —— 说明与来源
+dInd.onAbbrInput({ detail: { value: 'ROI2' } });
+dInd.onFullInput({ detail: { value: 'Return On Input' } });
+dInd.onZhInput({ detail: { value: '投入回报' } });
+dInd.onNoteInput({ detail: { value: '财务部口径' } });
+dInd.onRefInput({ detail: { value: '公司术语表 v2' } });
+dInd.onSave();
+eq(global.__lastToast, '已添加', '带行业/说明/来源的新增成功');
+const savedRow = mem['ma_user_v1'].filter((x) => x.abbr === 'ROI2')[0];
+eq(savedRow.industry, 'finance', '行业已保存');
+eq(savedRow.note, '财务部口径', '说明已保存');
+eq(savedRow.sourceRef, '公司术语表 v2', '来源已保存（字段不与 source 冲突）');
+
+// —— 重复：(缩写, 行业) 撞车要弹提示，而不是默默写进去
+const dDup = loadPage('pages/detail/detail');
+dDup.onLoad({ mode: 'add' });
+global.__lastModal = null;
+dDup.onIndustryPick({ currentTarget: { dataset: { key: 'finance' } } });
+dDup.onAbbrInput({ detail: { value: 'ROI2' } });
+dDup.onFullInput({ detail: { value: 'Another Version' } });
+dDup.onZhInput({ detail: { value: '另一个版本' } });
+dDup.onSave();
+ok(global.__lastModal && global.__lastModal.title === '已经有一条相同含义',
+  '同缩写 + 同行业保存时弹出冲突提示');
+ok(global.__lastModal.content.indexOf('投入回报') > 0, '提示里说明了已存在的那一条是什么');
+eq(mem['ma_user_v1'].filter((x) => x.abbr === 'ROI2').length, 1, '冲突时没有写入第二条');
 
 console.log('\n──────────────────────────────');
 console.log('通过 ' + pass + ' 项，失败 ' + fail + ' 项');

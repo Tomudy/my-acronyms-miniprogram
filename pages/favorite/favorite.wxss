@@ -89,12 +89,23 @@
 .row-foot {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   margin-top: 14rpx;
   font-size: 22rpx;
   color: var(--ink-3, #93A0AF);
 }
 .foot-dot {
   margin: 0 10rpx;
+}
+.row-foot .badge {
+  margin-right: 10rpx;
+}
+.note-line {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  line-height: 1.5;
+  color: var(--ink-3, #93A0AF);
 }
 
 .fav {

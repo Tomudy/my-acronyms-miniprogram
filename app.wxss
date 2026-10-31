@@ -88,6 +88,17 @@ view, text, input, textarea, button {
   background: var(--gold-soft);
   color: var(--gold-deep);
 }
+/* 行业徽章：同一缩写有多个含义时，它是列表里唯一的区分线索 */
+.badge-industry {
+  background: var(--bg);
+  color: var(--ink-muted);
+  border: 1rpx solid var(--line-strong);
+}
+/* 「还有 N 个含义」提示 */
+.badge-more {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
 
 /* ---------------- 筛选胶囊 / 排序 ---------------- */
 .chip {

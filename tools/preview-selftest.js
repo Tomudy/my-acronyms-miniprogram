@@ -73,22 +73,25 @@
     /* 统计展示区（搜索框正下方，真实数据源） */
     var snums = qa('.stat-card-num');
     var slabels = qa('.stat-card-label');
-    check('统计区渲染 3 张卡片', qa('.stat-card').length === 3, '实际 ' + qa('.stat-card').length);
-    check('统计区：已收录缩写总数 = 149', text('.stat-card-num') === '149', text('.stat-card-num'));
-    check('统计区：分类数量 = 3', snums.length > 1 && snums[1].textContent === '3',
+    check('统计区渲染 4 张卡片', qa('.stat-card').length === 4, '实际 ' + qa('.stat-card').length);
+    check('统计区：缩写数 = 149（多义只算一个）', text('.stat-card-num') === '149', text('.stat-card-num'));
+    check('统计区：含义数 = 154（多义各算一条）', snums.length > 1 && snums[1].textContent === '154',
       snums.length > 1 ? snums[1].textContent : '(无)');
-    check('统计区：最近更新为 YYYY-MM-DD',
-      snums.length > 2 && /^\d{4}-\d{2}-\d{2}$/.test(snums[2].textContent),
+    check('统计区：行业数量 ≥ 5', snums.length > 2 && Number(snums[2].textContent) >= 5,
       snums.length > 2 ? snums[2].textContent : '(无)');
-    check('统计区：三项标签齐全',
-      slabels.length === 3 && slabels[0].textContent === '已收录缩写' &&
-      slabels[1].textContent === '分类数量' && slabels[2].textContent === '最近更新',
+    check('统计区：最近更新为 YYYY-MM-DD',
+      snums.length > 3 && /^\d{4}-\d{2}-\d{2}$/.test(snums[3].textContent),
+      snums.length > 3 ? snums[3].textContent : '(无)');
+    check('统计区：四项标签齐全',
+      slabels.length === 4 && slabels[0].textContent === '缩写' &&
+      slabels[1].textContent === '含义（含多义）' && slabels[2].textContent === '行业场景' &&
+      slabels[3].textContent === '最近更新',
       slabels.length + ' 个标签');
 
     /* 点搜索框进搜索页 */
     click('.search-box');
     check('点搜索框进入搜索页', !!q('.search-input'), '当前页 ' + text('#nav-title'));
-    check('搜索页展示全部词条', cards() === 149, '实际 ' + cards());
+    check('搜索页展示全部含义', cards() === 154, '实际 ' + cards());
 
     /* 在搜索页收藏一条，返回首页看计数 */
     check('收藏按钮同时带 data-id 和 data-index 兜底',
@@ -126,8 +129,13 @@
     click('.search-box');
     var input = q('.search-input');
     setInput(input, 'api');
-    check('搜索 "api" 后只剩 1 张卡片', cards() === 1, '实际 ' + cards());
-    check('搜索结果为 API', text('.card-item .abbr') === 'API', text('.card-item .abbr'));
+    check('搜索 "api" 返回 IT 与医药两条含义', cards() === 2, '实际 ' + cards());
+    check('两条含义都带行业徽标',
+      qa('.card-item .badge-industry').length === 2,
+      Array.prototype.map.call(qa('.card-item .badge-industry'), function (e) {
+        return e.textContent.trim();
+      }).join(' / '));
+    check('列表标出「另有 1 个含义」', !!q('.card-item .badge-more'), text('.card-item .badge-more'));
 
     setInput(input, '应用程序');
     check('按中文释义可搜到', cards() >= 1 && text('.card-item .abbr') === 'API',
@@ -140,7 +148,7 @@
     check('显示空状态文案', text('.empty-title') === '没有找到匹配的词条', text('.empty-title'));
     check('有关键词时显示清除按钮', !!q('.ico-clear'));
     click('.ico-clear');
-    check('清除搜索后恢复 149 张卡片', cards() === 149, '实际 ' + cards());
+    check('清除搜索后恢复全部 154 张卡片', cards() === 154, '实际 ' + cards());
 
     var sorts = qa('.sort');
     click(sorts[1]);
@@ -148,6 +156,27 @@
       qa('.sort')[1].className);
     click(qa('.sort')[0]);
     check('切回「A → Z」排序', qa('.sort')[0].className.indexOf('sort-on') >= 0);
+
+    /* ========== 2.5 一对多：同一缩写的多个含义 ========== */
+    setInput(input, 'api');
+    var apiCards = qa('.card-item');
+    check('搜 "api" 得到 2 条含义', apiCards.length === 2, '实际 ' + apiCards.length);
+    click(apiCards[0]);
+    check('进入 API 详情页', text('.hero-abbr') === 'API', text('.hero-abbr'));
+    check('详情页展示行业徽标', !!q('.hero-row .badge-industry'), text('.hero-row .badge-industry'));
+    check('列出「还有一个含义」', qa('.meaning-item').length === 1,
+      '实际 ' + qa('.meaning-item').length);
+    check('另一个含义标注了行业', text('.meaning-item .badge-industry').length > 0,
+      text('.meaning-item .badge-industry'));
+    click('.meaning-item');
+    check('点进去是同一个缩写的另一个含义',
+      text('.hero-abbr') === 'API' && !!q('.hero-row .badge-industry'),
+      text('.hero-abbr') + ' / ' + text('.hero-row .badge-industry'));
+    back();
+    back();
+    var input2 = q('.search-input');
+    if (input2) setInput(input2, '');
+    check('返回搜索页并恢复全部列表', cards() === 154, '实际 ' + cards());
 
     /* ========== 3. 详情页（内置只读） ========== */
     click('.card-item');
@@ -212,9 +241,11 @@
     /* ========== 5. 收藏 tab ========== */
     back();
     /* 新增词条后，首页统计区应实时更新（onShow 刷新） */
-    check('新增后首页统计总数 = 150', text('.stat-card-num') === '150', text('.stat-card-num'));
-    check('新增后分类数量 = 4', qa('.stat-card-num')[1].textContent === '4',
+    check('新增后首页缩写数 = 150', text('.stat-card-num') === '150', text('.stat-card-num'));
+    check('新增后含义数 = 155', qa('.stat-card-num')[1].textContent === '155',
       qa('.stat-card-num')[1].textContent);
+    check('新增后行业数量 ≥ 5', Number(qa('.stat-card-num')[2].textContent) >= 5,
+      qa('.stat-card-num')[2].textContent);
     click('.search-box');
     setInput(q('.search-input'), 'MY');
     var myCard = cardByAbbr('MY');

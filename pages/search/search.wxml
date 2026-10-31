@@ -76,13 +76,15 @@
           <view class="card-body">
             <view class="row-top">
               <text class="abbr">{{item.abbr}}</text>
-              <text class="badge {{item.sourceClass}}">{{item.sourceText}}</text>
+              <!-- 行业徽标：同一缩写的多个含义靠它区分 -->
+              <text class="badge badge-industry">{{item.industryText}}</text>
             </view>
             <text class="full">{{item.full}}</text>
             <text class="zh">{{item.zh}}</text>
+            <text wx:if="{{item.note}}" class="note-line">{{item.note}}</text>
             <view class="row-foot">
-              <text class="foot">{{item.category}}</text>
-              <text class="foot-dot">·</text>
+              <text class="badge {{item.sourceClass}}">{{item.sourceText}}</text>
+              <text wx:if="{{item.multi}}" class="badge badge-more">另有 {{item.otherCount}} 个含义</text>
               <text class="foot">{{item.footText}}</text>
             </view>
           </view>

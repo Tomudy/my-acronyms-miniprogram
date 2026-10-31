@@ -43,6 +43,22 @@
 .hero-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+}
+.hero-row .badge {
+  margin-right: 12rpx;
+}
+/* 说明：只读模式下在头部下方补一行浅色小字 */
+.hero-note {
+  margin-top: 16rpx;
+  padding: 16rpx 20rpx;
+  background: var(--bg, #F4F4F1);
+  border-radius: 12rpx;
+}
+.hero-note-text {
+  font-size: 24rpx;
+  line-height: 1.55;
+  color: var(--ink-2, #4C5A6B);
 }
 .hero-abbr {
   font-size: var(--fs-hero, 52rpx);
@@ -179,4 +195,55 @@
 }
 .footer-full {
   flex: 1;
+}
+
+/* ---------------- 行业胶囊（横向滚动，不用原生 picker） ---------------- */
+.chips-scroll {
+  width: 100%;
+  white-space: nowrap;
+  padding: 4rpx 0;
+}
+.chips {
+  display: inline-flex;
+  align-items: center;
+}
+.chips .chip {
+  flex: none;
+  margin-right: 14rpx;
+}
+
+/* ---------------- 同一个缩写的其他含义 ---------------- */
+.meaning-list {
+  display: flex;
+  flex-direction: column;
+}
+.meaning-item {
+  background: var(--surface, #FFFFFF);
+  border: 1rpx solid var(--line, #E3E7EB);
+  border-radius: var(--radius, 16rpx);
+  padding: 20rpx 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: var(--shadow, none);
+}
+.meaning-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+.meaning-top .badge {
+  margin-right: 12rpx;
+}
+.meaning-full {
+  display: block;
+  font-size: 25rpx;
+  color: var(--ink-2, #4C5A6B);
+  line-height: 1.45;
+  word-break: break-all;
+}
+.meaning-zh {
+  display: block;
+  font-size: 28rpx;
+  color: var(--ink, #1C2530);
+  margin-top: 4rpx;
+  line-height: 1.45;
 }

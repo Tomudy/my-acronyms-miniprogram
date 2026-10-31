@@ -188,12 +188,24 @@
 .row-foot {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   margin-top: 14rpx;
   font-size: 22rpx;
   color: var(--ink-3, #93A0AF);
 }
 .foot-dot {
   margin: 0 10rpx;
+}
+.row-foot .badge {
+  margin-right: 10rpx;
+}
+/* 说明：有则在释义下方补一行浅色小字，不抢占主信息 */
+.note-line {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  line-height: 1.5;
+  color: var(--ink-3, #93A0AF);
 }
 
 /* 收藏按钮 */
