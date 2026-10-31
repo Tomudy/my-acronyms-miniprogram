@@ -1,0 +1,42 @@
+<!-- 首页：搜索入口 + 统计展示区 + 收藏计数（不展示任何列表） -->
+<view class="page">
+
+  <!-- 搜索入口：点了进搜索页，首页本身不展示结果 -->
+  <view class="search-box" hover-class="search-box-hover" bindtap="onSearchTap">
+    <view class="ico-search"></view>
+    <text class="search-ph">搜索缩写 / 英文原词 / 中文释义</text>
+  </view>
+
+  <!-- 统计展示区：紧贴搜索框正下方，与搜索框同宽、左右对齐、间距一致 -->
+  <view class="stats-row">
+    <view class="stat-card">
+      <text class="stat-card-num">{{stats.totalCount}}</text>
+      <text class="stat-card-label">已收录缩写</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-card-num">{{stats.categoryCount}}</text>
+      <text class="stat-card-label">分类数量</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-card-num stat-card-date">{{stats.lastUpdated}}</text>
+      <text class="stat-card-label">最近更新</text>
+    </view>
+  </view>
+
+  <!-- 收藏计数 -->
+  <view class="stat">
+    <view wx:if="{{hasFav}}" class="stat-line">
+      <text class="stat-word">已收藏</text>
+      <text class="stat-num">{{favCount}}</text>
+      <text class="stat-word">个缩写</text>
+    </view>
+    <text wx:else class="stat-empty">还没有收藏缩写</text>
+  </view>
+
+  <!-- 悬浮新增按钮 -->
+  <view class="fab" hover-class="fab-hover" bindtap="onAdd">
+    <view class="fab-line fab-line-v"></view>
+    <view class="fab-line fab-line-h"></view>
+  </view>
+
+</view>

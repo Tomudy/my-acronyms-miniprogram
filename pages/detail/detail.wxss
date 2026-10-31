@@ -1,0 +1,182 @@
+/* 详情页样式（商务风） */
+
+.page {
+  min-height: 100vh;
+  background: var(--bg, #F4F4F1);
+  padding-bottom: 60rpx;
+}
+
+/* ---------------- 顶部栏（新增 / 编辑模式）：左上角取消 ---------------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  background: var(--surface, #FFFFFF);
+  border-bottom: 1rpx solid var(--line, #E3E7EB);
+  padding: 12rpx 16rpx;
+}
+.topbar .nav-back {
+  flex: none;
+}
+.topbar-title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-size: var(--fs-title, 34rpx);
+  font-weight: 600;
+  color: var(--ink, #1C2530);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* 与左侧取消按钮等宽的占位，保证标题真正居中 */
+.topbar-side {
+  flex: none;
+  width: 140rpx;
+}
+
+/* ---------------- 头部 ---------------- */
+.hero {
+  background: var(--surface, #FFFFFF);
+  padding: 32rpx 32rpx 28rpx;
+  border-bottom: 1rpx solid var(--line, #E3E7EB);
+}
+.hero-row {
+  display: flex;
+  align-items: center;
+}
+.hero-abbr {
+  font-size: var(--fs-hero, 52rpx);
+  font-weight: 700;
+  color: var(--ink, #1C2530);
+  letter-spacing: 1rpx;
+  line-height: 1.2;
+  margin-right: 16rpx;
+  word-break: break-all;
+}
+.hero-full {
+  display: block;
+  font-size: 26rpx;
+  color: var(--ink-2, #4C5A6B);
+  margin-top: 14rpx;
+  line-height: 1.45;
+  word-break: break-all;
+}
+.hero-zh {
+  display: block;
+  font-size: 30rpx;
+  color: var(--ink, #1C2530);
+  margin-top: 8rpx;
+  line-height: 1.45;
+  word-break: break-all;
+}
+.hero-actions {
+  margin-top: 24rpx;
+}
+
+/* 收藏按钮 */
+.fav-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 64rpx;
+  padding: 0 28rpx;
+  border-radius: 100rpx;
+  background: var(--surface-2, #FAFAF8);
+  border: 1rpx solid var(--line, #E3E7EB);
+  transition: background 0.15s ease;
+}
+.fav-btn-hover {
+  background: #EDEDEA;
+}
+.fav-btn-star {
+  font-size: 32rpx;
+  color: var(--ink-3, #93A0AF);
+  line-height: 1;
+  margin-right: 10rpx;
+}
+.fav-btn-text {
+  font-size: 26rpx;
+  color: var(--ink-2, #4C5A6B);
+}
+.fav-on {
+  background: var(--gold-soft, #F6F0E2);
+  border-color: #E6DCC0;
+}
+.fav-on .fav-btn-star {
+  color: var(--gold, #B98A2F);
+}
+.fav-on .fav-btn-text {
+  color: var(--gold-deep, #8F6A24);
+  font-weight: 600;
+}
+
+/* ---------------- 只读提示 ---------------- */
+.tip {
+  margin: 20rpx 24rpx 0;
+  padding: 20rpx 22rpx;
+  background: var(--gold-soft, #F6F0E2);
+  border-radius: var(--radius-s, 12rpx);
+  border-left: 6rpx solid var(--gold, #B98A2F);
+}
+.tip-text {
+  font-size: var(--fs-cap, 24rpx);
+  color: #7A6124;
+  line-height: 1.55;
+}
+
+/* ---------------- 分组 ---------------- */
+.section {
+  margin-top: 24rpx;
+  padding: 0 24rpx;
+}
+.section-title {
+  display: block;
+  font-size: var(--fs-cap, 24rpx);
+  color: var(--ink-2, #4C5A6B);
+  margin: 0 8rpx 14rpx;
+}
+
+/* ---------------- 记录信息 ---------------- */
+.meta-card {
+  background: var(--surface, #FFFFFF);
+  border: 1rpx solid var(--line, #E3E7EB);
+  border-radius: var(--radius, 16rpx);
+  padding: 8rpx 24rpx;
+}
+.meta-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid var(--line, #E3E7EB);
+}
+.meta-line:last-child {
+  border-bottom: none;
+}
+.meta-key {
+  font-size: 26rpx;
+  color: var(--ink-2, #4C5A6B);
+}
+.meta-val {
+  font-size: 26rpx;
+  color: var(--ink, #1C2530);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------- 底部操作 ---------------- */
+.footer {
+  display: flex;
+  align-items: center;
+  padding: 36rpx 24rpx 0;
+}
+.footer-del {
+  flex: none;
+  width: 200rpx;
+  margin-right: 18rpx;
+}
+.footer-save {
+  flex: 1;
+  min-width: 0;
+}
+.footer-full {
+  flex: 1;
+}

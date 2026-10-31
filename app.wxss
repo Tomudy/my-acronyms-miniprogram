@@ -1,0 +1,332 @@
+/**
+ * My Acronym —— 全局样式（商务风改版 2026-10-30）
+ *
+ * 设计 token 全部集中在这里（CSS 变量，改一处即可全局换肤）：
+ *   配色（中性 + 低饱和，克制强调）：
+ *     米白页面底  #F4F4F1     卡片白    #FFFFFF     次级表面 #FAFAF8
+ *     石墨蓝主文字 #1C2530     次文字    #4C5A6B     弱文字   #93A0AF
+ *     边框       #E3E7EB      主色      #31597E（低饱和石墨蓝）
+ *     收藏金     #B98A2F（低饱和）
+ *   字号层级：hero 52 / title 34 / num 40 / body 28 / cap 24 rpx
+ *   卡片：圆角 16rpx、1rpx 边框、低透明度阴影两层
+ *
+ * 尺寸统一使用 rpx（750rpx = 屏幕宽度），自动适配不同机型。
+ * 专业稳重无衬线字体栈，数字用 tabular-nums 等宽对齐。
+ */
+
+page {
+  /* —— 颜色 token —— */
+  --bg: #F4F4F1;
+  --surface: #FFFFFF;
+  --surface-2: #FAFAF8;
+  --ink: #1C2530;
+  --ink-2: #4C5A6B;
+  --ink-3: #93A0AF;
+  --line: #E3E7EB;
+  --line-strong: #C9D0D8;
+  --accent: #31597E;
+  --accent-deep: #234260;
+  --accent-soft: #EBF1F6;
+  --gold: #B98A2F;
+  --gold-soft: #F6F0E2;
+  --gold-deep: #8F6A24;
+  --danger: #B4483C;
+  --danger-soft: #F7ECEA;
+
+  /* —— 尺寸 token —— */
+  --fs-hero: 52rpx;
+  --fs-title: 34rpx;
+  --fs-num: 40rpx;
+  --fs-body: 28rpx;
+  --fs-cap: 24rpx;
+  --radius: 16rpx;
+  --radius-s: 12rpx;
+  --shadow: 0 2rpx 10rpx rgba(28, 37, 48, 0.05);
+  --shadow-lift: 0 6rpx 20rpx rgba(28, 37, 48, 0.10);
+
+  background: #F4F4F1;
+  color: #1C2530;
+  font-size: 28rpx;
+  line-height: 1.55;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+view, text, input, textarea, button {
+  box-sizing: border-box;
+}
+
+/* ---------------- 卡片（统一圆角 / 边框 / 阴影层次） ---------------- */
+.card {
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  border-radius: var(--radius);
+  padding: 24rpx;
+  margin: 0 24rpx 18rpx;
+  box-shadow: var(--shadow);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.card-hover {
+  transform: scale(0.985);
+  box-shadow: var(--shadow-lift);
+}
+
+/* ---------------- 徽章 ---------------- */
+.badge {
+  font-size: 20rpx;
+  line-height: 1;
+  padding: 8rpx 14rpx;
+  border-radius: 100rpx;
+  flex: none;
+}
+.badge-builtin {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.badge-custom {
+  background: var(--gold-soft);
+  color: var(--gold-deep);
+}
+
+/* ---------------- 筛选胶囊 / 排序 ---------------- */
+.chip {
+  display: flex;
+  align-items: center;
+  height: 56rpx;
+  padding: 0 22rpx;
+  border-radius: 100rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  transition: background 0.15s ease;
+}
+.chip-hover {
+  background: var(--surface-2);
+}
+.chip-on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.chip-star {
+  font-size: 26rpx;
+  color: var(--ink-3);
+  margin-right: 8rpx;
+  line-height: 1;
+}
+.chip-star-on {
+  color: var(--gold);
+}
+.chip-label {
+  font-size: var(--fs-cap);
+  color: var(--ink-2);
+}
+.chip-on .chip-label {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.sort {
+  font-size: var(--fs-cap);
+  color: var(--ink-2);
+  padding: 12rpx 20rpx;
+  border-radius: 100rpx;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.sort-hover {
+  background: var(--surface-2);
+}
+.sort-on {
+  background: var(--ink);
+  color: #FFFFFF;
+  font-weight: 600;
+}
+.sort-on.sort-hover {
+  background: #2E3A48;
+}
+
+/* ---------------- 空状态 ---------------- */
+.empty {
+  padding: 120rpx 60rpx 160rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.empty-box {
+  width: 132rpx;
+  height: 132rpx;
+  border-radius: 50%;
+  border: 4rpx dashed var(--line-strong);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28rpx;
+}
+.empty-glyph {
+  font-size: 56rpx;
+  color: var(--ink-3);
+  line-height: 1;
+}
+.empty-title {
+  font-size: 30rpx;
+  color: var(--ink);
+  font-weight: 600;
+}
+.empty-desc {
+  font-size: 25rpx;
+  color: var(--ink-3);
+  margin-top: 12rpx;
+  text-align: center;
+}
+.empty-btn {
+  margin-top: 36rpx;
+  height: 68rpx;
+  padding: 0 40rpx;
+  line-height: 68rpx;
+  border-radius: 100rpx;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 26rpx;
+  font-weight: 600;
+}
+.empty-btn-hover {
+  background: #DDE8F0;
+}
+
+/* ---------------- 按钮 ---------------- */
+.btn {
+  height: 84rpx;
+  line-height: 84rpx;
+  border-radius: 100rpx;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  transition: opacity 0.15s ease, transform 0.12s ease;
+}
+.btn-hover {
+  opacity: 0.82;
+  transform: scale(0.98);
+}
+.btn-primary {
+  background: var(--accent);
+  color: #FFFFFF;
+}
+.btn-ghost {
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  color: var(--ink-2);
+}
+.btn-danger {
+  background: var(--danger-soft);
+  border: 1rpx solid #E8D5D2;
+  color: var(--danger);
+}
+
+/* ---------------- 悬浮新增按钮 ---------------- */
+.fab {
+  position: fixed;
+  right: 32rpx;
+  bottom: 140rpx;
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 8rpx 24rpx rgba(49, 89, 126, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+.fab-hover {
+  background: var(--accent-deep);
+  transform: scale(0.93);
+}
+.fab-line {
+  position: absolute;
+  background: #FFFFFF;
+  border-radius: 4rpx;
+}
+.fab-line-v {
+  width: 6rpx;
+  height: 44rpx;
+}
+.fab-line-h {
+  width: 44rpx;
+  height: 6rpx;
+}
+
+/* ---------------- 顶部返回 / 取消入口 ---------------- */
+/* 返回箭头（纯 CSS chevron，商务风细线） */
+.chev {
+  width: 18rpx;
+  height: 18rpx;
+  border-left: 4rpx solid currentColor;
+  border-bottom: 4rpx solid currentColor;
+  border-radius: 2rpx;
+  transform: rotate(45deg);
+  flex: none;
+}
+.nav-back {
+  display: inline-flex;
+  align-items: center;
+  height: 56rpx;
+  padding: 0 18rpx 0 10rpx;
+  border-radius: 100rpx;
+  color: var(--ink-2);
+  transition: background 0.15s ease;
+}
+.nav-back-hover {
+  background: var(--surface-2);
+}
+.nav-back-text {
+  font-size: var(--fs-body);
+  color: var(--ink-2);
+  margin-left: 4rpx;
+}
+
+/* ---------------- 表单 ---------------- */
+.field {
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  border-radius: var(--radius);
+  padding: 26rpx 24rpx;
+  margin-bottom: 18rpx;
+}
+.field-label {
+  font-size: var(--fs-cap);
+  color: var(--ink-2);
+  margin-bottom: 12rpx;
+}
+/* 字段标签后跟随的说明文字（如「点一下填入微信昵称」） */
+.field-hint {
+  font-size: 22rpx;
+  color: var(--ink-3);
+}
+.field-input {
+  font-size: 30rpx;
+  color: var(--ink);
+  min-height: 48rpx;
+  width: 100%;
+}
+.field-textarea {
+  font-size: var(--fs-body);
+  color: var(--ink);
+  width: 100%;
+  height: 120rpx;
+  line-height: 1.5;
+}
+.field-ph {
+  color: var(--ink-3);
+}
+
+/* 内置词条：只读态，视觉上与可编辑区分开 */
+.field-locked {
+  background: var(--surface-2);
+}
+.field-locked .field-label {
+  color: var(--ink-3);
+}
+.field-locked .field-input,
+.field-locked .field-textarea {
+  color: var(--ink-3);
+}

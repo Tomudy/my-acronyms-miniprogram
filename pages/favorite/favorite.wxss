@@ -1,0 +1,117 @@
+/* 收藏页样式（商务风） */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg, #F4F4F1);
+}
+
+/* ---------------- 顶部固定区 ---------------- */
+.header {
+  flex: none;
+  background: var(--surface, #FFFFFF);
+  padding: 20rpx 24rpx 18rpx;
+  border-bottom: 1rpx solid var(--line, #E3E7EB);
+}
+.header-row {
+  display: flex;
+  align-items: center;
+}
+.header-title {
+  font-size: var(--fs-title, 34rpx);
+  font-weight: 700;
+  color: var(--ink, #1C2530);
+}
+.header-count {
+  font-size: var(--fs-cap, 24rpx);
+  color: var(--ink-3, #93A0AF);
+  margin-left: 14rpx;
+  font-variant-numeric: tabular-nums;
+}
+.sorts {
+  display: inline-flex;
+  align-items: center;
+  background: var(--surface-2, #FAFAF8);
+  border: 1rpx solid var(--line, #E3E7EB);
+  border-radius: 100rpx;
+  padding: 4rpx;
+  margin-top: 16rpx;
+}
+
+/* ---------------- 滚动列表 ---------------- */
+.list-wrap {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow: hidden;
+}
+.list {
+  padding-top: 20rpx;
+  padding-bottom: 60rpx;
+}
+
+.card-item {
+  display: flex;
+  align-items: flex-start;
+}
+.card-body {
+  flex: 1;
+  min-width: 0;
+}
+.row-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+.abbr {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: var(--ink, #1C2530);
+  letter-spacing: 1rpx;
+  margin-right: 14rpx;
+  line-height: 1.2;
+}
+.full {
+  display: block;
+  font-size: 25rpx;
+  color: var(--ink-2, #4C5A6B);
+  line-height: 1.45;
+  word-break: break-all;
+}
+.zh {
+  display: block;
+  font-size: 28rpx;
+  color: var(--ink, #1C2530);
+  margin-top: 6rpx;
+  line-height: 1.45;
+  word-break: break-all;
+}
+.row-foot {
+  display: flex;
+  align-items: center;
+  margin-top: 14rpx;
+  font-size: 22rpx;
+  color: var(--ink-3, #93A0AF);
+}
+.foot-dot {
+  margin: 0 10rpx;
+}
+
+.fav {
+  flex: none;
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10rpx;
+  border-radius: 50%;
+}
+.fav-hover {
+  background: var(--surface-2, #FAFAF8);
+}
+.fav-star {
+  font-size: 40rpx;
+  color: var(--gold, #B98A2F);
+  line-height: 1;
+}

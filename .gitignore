@@ -1,0 +1,13 @@
+# 生成产物：由 node tools/build-preview.mjs 重建，不进版本历史
+preview.html
+
+# 临时文件
+.tmp/
+*.log
+
+# 依赖
+node_modules/
+
+# 系统文件
+.DS_Store
+Thumbs.db

@@ -1,0 +1,126 @@
+/* 首页样式：商务风 —— 搜索入口 + 统计展示区 + 收藏计数（无列表） */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--bg, #F4F4F1);
+}
+
+/* ---------------- 搜索入口（卡片式，与统计区同宽对齐） ---------------- */
+.search-box {
+  flex: none;
+  display: flex;
+  align-items: center;
+  height: 80rpx;
+  margin: 28rpx 24rpx 0;
+  padding: 0 28rpx;
+  background: var(--surface, #FFFFFF);
+  border: 1rpx solid var(--line, #E3E7EB);
+  border-radius: var(--radius, 16rpx);
+  box-shadow: var(--shadow, 0 2rpx 10rpx rgba(28, 37, 48, 0.05));
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.search-box-hover {
+  border-color: var(--line-strong, #C9D0D8);
+  box-shadow: var(--shadow-lift, 0 6rpx 20rpx rgba(28, 37, 48, 0.10));
+}
+.ico-search {
+  position: relative;
+  width: 28rpx;
+  height: 28rpx;
+  border: 4rpx solid var(--ink-3, #93A0AF);
+  border-radius: 50%;
+  flex: none;
+  margin-right: 18rpx;
+}
+.ico-search::after {
+  content: '';
+  position: absolute;
+  right: -12rpx;
+  bottom: -8rpx;
+  width: 16rpx;
+  height: 4rpx;
+  background: var(--ink-3, #93A0AF);
+  border-radius: 4rpx;
+  transform: rotate(45deg);
+}
+.search-ph {
+  flex: 1;
+  min-width: 0;
+  font-size: 27rpx;
+  color: var(--ink-3, #93A0AF);
+}
+
+/* ---------------- 统计展示区（搜索框正下方） ---------------- */
+/* 与搜索框同为 24rpx 左右边距 → 水平对齐；卡片间距统一 16rpx；
+   flex 自适应：宽度足够时三卡横排，过窄时自动换行为两列/单列 */
+.stats-row {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin: 20rpx 24rpx 0;
+}
+.stat-card {
+  flex: 1 1 200rpx;
+  min-width: 200rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 12rpx 22rpx;
+  background: var(--surface, #FFFFFF);
+  border: 1rpx solid var(--line, #E3E7EB);
+  border-radius: var(--radius, 16rpx);
+  box-shadow: var(--shadow, 0 2rpx 10rpx rgba(28, 37, 48, 0.05));
+}
+.stat-card-num {
+  font-size: var(--fs-num, 40rpx);
+  font-weight: 700;
+  color: var(--accent, #31597E);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.stat-card-date {
+  /* 日期字符串较长，字号单独收一档保持卡片内不溢出 */
+  font-size: 27rpx;
+  letter-spacing: 0.5rpx;
+}
+.stat-card-label {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: var(--ink-3, #93A0AF);
+  line-height: 1;
+}
+
+/* ---------------- 收藏计数 ---------------- */
+.stat {
+  flex: 1 1 0%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stat-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+.stat-word {
+  font-size: 30rpx;
+  color: var(--ink-2, #4C5A6B);
+  line-height: 1;
+}
+.stat-num {
+  font-size: 76rpx;
+  font-weight: 700;
+  color: var(--accent, #31597E);
+  line-height: 1;
+  margin: 0 14rpx;
+  font-variant-numeric: tabular-nums;
+}
+/* 数量为 0 时的空状态 */
+.stat-empty {
+  font-size: 30rpx;
+  color: var(--ink-3, #93A0AF);
+}

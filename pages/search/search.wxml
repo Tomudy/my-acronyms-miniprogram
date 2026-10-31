@@ -1,0 +1,120 @@
+<!-- 搜索结果页：顶部实时搜索 + 排序 + 词条列表 -->
+<view class="page">
+
+  <!-- ===== 顶部固定区：搜索 / 排序 / 统计 ===== -->
+  <view class="header">
+    <view class="search-row">
+      <view class="search-box">
+        <view class="ico-search"></view>
+        <input
+          class="search-input"
+          value="{{keyword}}"
+          focus="{{autoFocus}}"
+          bindinput="onSearchInput"
+          confirm-type="search"
+          placeholder="搜索缩写 / 英文原词 / 中文释义"
+          placeholder-class="search-ph"
+        />
+        <view
+          wx:if="{{keyword}}"
+          class="ico-clear"
+          hover-class="ico-clear-hover"
+          catchtap="onClearSearch"
+        >
+          <view class="ico-clear-in"></view>
+        </view>
+      </view>
+      <view class="cancel" hover-class="cancel-hover" bindtap="onBack">取消</view>
+    </view>
+
+    <view class="toolbar">
+      <view class="meta">
+        <text class="meta-num">{{total}}</text>
+        <text class="meta-txt">条结果</text>
+        <text class="meta-dot">·</text>
+        <text class="meta-num">{{favCount}}</text>
+        <text class="meta-txt">条收藏</text>
+      </view>
+
+      <view class="sorts">
+        <view
+          class="sort {{sortBy === 'letter' ? 'sort-on' : ''}}"
+          hover-class="sort-hover"
+          data-by="letter"
+          bindtap="onSort"
+        >A→Z</view>
+        <view
+          class="sort {{sortBy === 'time' ? 'sort-on' : ''}}"
+          hover-class="sort-hover"
+          data-by="time"
+          bindtap="onSort"
+        >最近更新</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 滚动列表 ===== -->
+  <scroll-view
+    class="list-wrap"
+    scroll-y="{{true}}"
+    scroll-top="{{scrollTop}}"
+    enhanced="{{true}}"
+    show-scrollbar="{{false}}"
+  >
+    <view class="list">
+
+      <block wx:if="{{list.length > 0}}">
+        <view
+          class="card card-item"
+          wx:for="{{list}}"
+          wx:key="id"
+          hover-class="card-hover"
+          hover-stay-time="80"
+          data-id="{{item.id}}"
+          bindtap="onItemTap"
+        >
+          <view class="card-body">
+            <view class="row-top">
+              <text class="abbr">{{item.abbr}}</text>
+              <text class="badge {{item.sourceClass}}">{{item.sourceText}}</text>
+            </view>
+            <text class="full">{{item.full}}</text>
+            <text class="zh">{{item.zh}}</text>
+            <view class="row-foot">
+              <text class="foot">{{item.category}}</text>
+              <text class="foot-dot">·</text>
+              <text class="foot">{{item.footText}}</text>
+            </view>
+          </view>
+
+          <view
+            class="fav {{item.fav ? 'fav-on' : ''}}"
+            hover-class="fav-hover"
+            catchtap="onToggleFav"
+            data-id="{{item.id}}"
+            data-index="{{index}}"
+          >
+            <text class="fav-star">{{item.fav ? '★' : '☆'}}</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- 空状态：搜索无结果 / 无数据 -->
+      <view wx:else class="empty">
+        <view class="empty-box">
+          <text class="empty-glyph">{{emptyGlyph}}</text>
+        </view>
+        <text class="empty-title">{{emptyTitle}}</text>
+        <text class="empty-desc">{{emptyDesc}}</text>
+        <view
+          wx:if="{{emptyAction}}"
+          class="empty-btn"
+          hover-class="empty-btn-hover"
+          bindtap="onEmptyAction"
+        >{{emptyAction}}</view>
+      </view>
+
+    </view>
+  </scroll-view>
+
+</view>

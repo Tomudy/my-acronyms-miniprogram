@@ -1,0 +1,144 @@
+<!-- 详情页：查看 / 新增 / 编辑 -->
+<view class="page">
+
+  <!-- 顶部栏（新增 / 编辑模式）：左上角「取消」返回上一页 -->
+  <view wx:if="{{canEdit}}" class="topbar">
+    <view class="nav-back" hover-class="nav-back-hover" bindtap="onCancel">
+      <view class="chev"></view>
+      <text class="nav-back-text">取消</text>
+    </view>
+    <text class="topbar-title">{{navTitle}}</text>
+    <view class="topbar-side"></view>
+  </view>
+
+  <!-- 头部：大缩写 + 来源 -->
+  <view class="hero">
+    <view class="hero-row">
+      <text class="hero-abbr">{{abbr || '新词条'}}</text>
+      <text class="badge {{sourceClass}}">{{sourceText}}</text>
+    </view>
+    <text class="hero-full">{{full || '填写英文原词'}}</text>
+    <text class="hero-zh">{{zh || '填写中文释义'}}</text>
+
+    <view class="hero-actions">
+      <view
+        class="fav-btn {{fav ? 'fav-on' : ''}}"
+        hover-class="fav-btn-hover"
+        bindtap="onToggleFav"
+      >
+        <text class="fav-btn-star">{{fav ? '★' : '☆'}}</text>
+        <text class="fav-btn-text">{{fav ? '已收藏' : '收藏'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 只读提示（内置词条） -->
+  <view wx:if="{{isBuiltin}}" class="tip">
+    <text class="tip-text">内置词条为只读，不能编辑或删除；需要的话可以新增一条自己的词条。</text>
+  </view>
+
+  <!-- 表单 -->
+  <view class="section">
+    <text class="section-title">词条内容</text>
+
+    <view class="field {{isBuiltin ? 'field-locked' : ''}}">
+      <text class="field-label">缩写</text>
+      <input
+        class="field-input"
+        value="{{abbr}}"
+        bindinput="onAbbrInput"
+        placeholder="例如 API"
+        placeholder-class="field-ph"
+        disabled="{{isBuiltin}}"
+        maxlength="40"
+      />
+    </view>
+
+    <view class="field {{isBuiltin ? 'field-locked' : ''}}">
+      <text class="field-label">英文原词</text>
+      <textarea
+        class="field-textarea"
+        value="{{full}}"
+        bindinput="onFullInput"
+        placeholder="例如 Application Programming Interface"
+        placeholder-class="field-ph"
+        disabled="{{isBuiltin}}"
+        maxlength="200"
+        auto-height
+      />
+    </view>
+
+    <view class="field {{isBuiltin ? 'field-locked' : ''}}">
+      <text class="field-label">中文释义</text>
+      <textarea
+        class="field-textarea"
+        value="{{zh}}"
+        bindinput="onZhInput"
+        placeholder="例如 应用程序编程接口"
+        placeholder-class="field-ph"
+        disabled="{{isBuiltin}}"
+        maxlength="200"
+        auto-height
+      />
+    </view>
+
+    <view class="field {{isBuiltin ? 'field-locked' : ''}}">
+      <text class="field-label">创建者<text class="field-hint">（点一下填入微信昵称）</text></text>
+      <!-- type="nickname"：微信官方「头像昵称填写能力」。
+           点输入框会拉起微信面板填入本人昵称；拿不到时留空，保存后兜底为「匿名用户」。
+           平台已回收 getUserProfile/getUserInfo，无法静默读取昵称，这是唯一合规途径。 -->
+      <input
+        class="field-input"
+        type="nickname"
+        value="{{creator}}"
+        bindinput="onCreatorInput"
+        placeholder="点击填写微信昵称"
+        placeholder-class="field-ph"
+        disabled="{{isBuiltin}}"
+        maxlength="20"
+      />
+    </view>
+  </view>
+
+  <!-- 元信息 -->
+  <view class="section">
+    <text class="section-title">记录信息</text>
+    <view class="meta-card">
+      <view class="meta-line">
+        <text class="meta-key">来源</text>
+        <text class="meta-val">{{sourceText}}</text>
+      </view>
+      <view class="meta-line">
+        <text class="meta-key">创建时间</text>
+        <text class="meta-val">{{createdAt || '保存后自动生成'}}</text>
+      </view>
+      <view class="meta-line">
+        <text class="meta-key">修改时间</text>
+        <text class="meta-val">{{updatedAt || '保存后自动生成'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="footer">
+    <view
+      wx:if="{{canEdit}}"
+      class="btn btn-danger footer-del"
+      hover-class="btn-hover"
+      bindtap="onDelete"
+    >删除</view>
+    <view
+      wx:if="{{canEdit}}"
+      class="btn btn-primary footer-save"
+      hover-class="btn-hover"
+      bindtap="onSave"
+    >{{isNew ? '添加词条' : '保存修改'}}</view>
+    <view
+      wx:if="{{!canEdit}}"
+      class="btn btn-ghost footer-full"
+      hover-class="btn-hover"
+      bindtap="onToggleFav"
+    >{{fav ? '取消收藏' : '收藏这条'}}</view>
+  </view>
+
+</view>

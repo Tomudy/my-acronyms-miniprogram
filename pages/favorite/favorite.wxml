@@ -1,0 +1,87 @@
+<!-- 收藏页：展示收藏的词条 -->
+<view class="page">
+
+  <view class="header">
+    <view class="header-row">
+      <!-- 左上角返回：有上级页面返回上一页，没有（从 tabBar 直接进入）则切回首页 -->
+      <view class="nav-back" hover-class="nav-back-hover" bindtap="onBack">
+        <view class="chev"></view>
+        <text class="nav-back-text">返回</text>
+      </view>
+      <text class="header-title">我的收藏</text>
+      <text class="header-count">{{total}} 条</text>
+    </view>
+    <view class="sorts">
+      <view
+        class="sort {{sortBy === 'letter' ? 'sort-on' : ''}}"
+        hover-class="sort-hover"
+        data-by="letter"
+        bindtap="onSort"
+      >A→Z</view>
+      <view
+        class="sort {{sortBy === 'time' ? 'sort-on' : ''}}"
+        hover-class="sort-hover"
+        data-by="time"
+        bindtap="onSort"
+      >最近更新</view>
+    </view>
+  </view>
+
+  <scroll-view
+    class="list-wrap"
+    scroll-y="{{true}}"
+    enhanced="{{true}}"
+    show-scrollbar="{{false}}"
+  >
+    <view class="list">
+
+      <block wx:if="{{list.length > 0}}">
+        <view
+          class="card card-item"
+          wx:for="{{list}}"
+          wx:key="id"
+          hover-class="card-hover"
+          hover-stay-time="80"
+          data-id="{{item.id}}"
+          bindtap="onItemTap"
+        >
+          <view class="card-body">
+            <view class="row-top">
+              <text class="abbr">{{item.abbr}}</text>
+              <text class="badge {{item.sourceClass}}">{{item.sourceText}}</text>
+            </view>
+            <text class="full">{{item.full}}</text>
+            <text class="zh">{{item.zh}}</text>
+            <view class="row-foot">
+              <text class="foot">{{item.category}}</text>
+              <text class="foot-dot">·</text>
+              <text class="foot">{{item.footText}}</text>
+            </view>
+          </view>
+
+          <view
+            class="fav fav-on"
+            hover-class="fav-hover"
+            catchtap="onToggleFav"
+            data-id="{{item.id}}"
+            data-index="{{index}}"
+          >
+            <text class="fav-star">★</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- 收藏为空 -->
+      <view wx:else class="empty">
+        <view class="empty-box">
+          <text class="empty-glyph">{{emptyGlyph}}</text>
+        </view>
+        <text class="empty-title">{{emptyTitle}}</text>
+        <text class="empty-desc">{{emptyDesc}}</text>
+        <view class="empty-btn" hover-class="empty-btn-hover" bindtap="onGoSearch">去搜索缩写</view>
+      </view>
+
+    </view>
+  </scroll-view>
+
+</view>
