@@ -1,19 +1,56 @@
 /**
  * My Acronym —— 内置词条数据
  *
- * 数据结构（每条一行，按顺序）：[缩写, 完整英文原词, 中文释义, 分类]
- * 分类取值：IT / 商务 / 日常
+ * 数据结构（每条一行，按顺序）：[缩写, 完整英文原词, 中文释义, 一级分类, 行业?, 说明?]
+ *   一级分类 category：IT / 商务 / 日常 / 医疗健康 ……（粗粒度，首页「分类数量」按它统计）
+ *   行业 industry  ：行业 / 场景 key（见下方 INDUSTRIES），缺省时按 category 推导
+ *   说明 note      ：可选的用法备注，补充说明字段
  *
- * 说明：
- * - id 由缩写自动生成（b_ + 缩写 slug），保证同一缩写在多次启动中 id 稳定，
- *   这样收藏状态、编辑记录不会因为数组顺序变化而错位。
- * - source 固定为 'builtin'（内置只读）；用户自定义词条的 source 为 'custom'。
- * - 内置数据的 version 用于「后续仅合并更新」的策略：版本号不变则跳过写入，
- *   版本号变大时只做增量合并（新增 + 覆盖文案），不触碰用户数据与收藏。
+ * 一对多：同一个缩写在不同行业下可以有多条不同含义（例如 API 在 IT 是「应用程序编程接口」，
+ * 在医药是「活性药物成分」）。因此：
+ * - **一条记录 = 一个含义**，不是「一个缩写一个条目」；
+ * - 唯一性约束是 (缩写, 行业)，而不是单独的缩写；
+ * - id = b_ + 缩写 slug + '__' + 行业 key，保证同一缩写的多个含义各有稳定 id。
+ *
+ * legacyId 是改造前的旧 id（b_ + 缩写 slug）。id 规则变更会让存量收藏里的旧 id 全部失效，
+ * 迁移逻辑靠它把旧 id 换成新 id —— 详见 utils/storage.js 的 migrateFavIds()。
+ *
+ * VERSION 用于记录数据版本；utils/storage.js 的合并策略是「每次启动做增量合并」，
+ * 版本号只作为元信息，不参与是否合并的判断。
  */
 
-const VERSION = 1;
+const VERSION = 2;
 const RELEASE_DATE = '2026-01-01';
+
+/**
+ * 行业 / 场景字典。
+ * key 参与 id 生成，必须是纯英文小写（slug 规则限制），改动 key 等于换 id —— 不要随便动。
+ * name 用于界面展示；custom 表示是否允许用户把它作为自填行业。
+ */
+const INDUSTRIES = [
+  { key: 'general', name: '通用', desc: '跨行业通用的含义' },
+  { key: 'it', name: 'IT / 互联网', desc: '软件开发、网络与信息技术' },
+  { key: 'business', name: '商业 / 职场', desc: '企业经营与办公协作' },
+  { key: 'finance', name: '金融 / 财税', desc: '银行、证券、会计与财务' },
+  { key: 'legal', name: '法务 / 合规', desc: '合同、法务审阅与合规' },
+  { key: 'medical', name: '医疗健康', desc: '临床、医药与公共卫生' },
+  { key: 'marketing', name: '市场营销 / 公关', desc: '品牌、投放与公关传播' },
+  { key: 'hr', name: '人力资源', desc: '招聘、薪酬与组织管理' },
+  { key: 'logistics', name: '物流 / 供应链', desc: '仓储运输与供应链' },
+  { key: 'manufacturing', name: '制造业', desc: '生产制造与质量管理' },
+  { key: 'design', name: '设计 / 创意', desc: '视觉设计、音视频与设计工具' },
+  { key: 'sports', name: '体育竞技', desc: '赛事、训练与竞技术语' },
+  { key: 'edu', name: '教育', desc: '教学、考试与学术研究' },
+  { key: 'other', name: '其他', desc: '以上都不合适时的兜底' }
+];
+
+/** 未显式写行业时，按一级分类推导的默认行业 key */
+const CATEGORY_INDUSTRY = {
+  IT: 'it',
+  商务: 'business',
+  日常: 'general',
+  医疗健康: 'medical'
+};
 
 const RAW = [
   // ============ IT / 技术 ============
@@ -170,9 +207,22 @@ const RAW = [
   ['RE', 'Reply', '回复（邮件前缀）', '日常'],
   ['FWD', 'Forward', '转发（邮件前缀）', '日常'],
   ['ATTN', 'Attention', '收件人／请注意', '日常'],
+
+  // ============ 同一个缩写，不同行业的含义 ============
+  // 这些条目的缩写上面已经出现过，靠不同的 industry 共存 —— 唯一键是 (缩写, 行业)。
+  ['API', 'Active Pharmaceutical Ingredient', '活性药物成分（原料药）', '医疗健康', 'medical',
+    '医药研发与注册语境下的 API，指制剂中起药效的活性成分'],
+  ['ATM', 'Automated Teller Machine', '自动柜员机', '商务', 'finance',
+    '金融场景指自助取款机；网络聊天里的 ATM 是 At The Moment（此刻）'],
+  ['PS', 'Adobe Photoshop', 'Photoshop 图像处理软件', 'IT', 'design',
+    '设计软件语境；邮件末尾的 PS 是 Postscript（附言）'],
+  ['PR', 'Public Relations', '公共关系', '商务', 'marketing',
+    '公关 / 传播语境；研发语境的 PR 是 Pull Request（代码合并请求）'],
+  ['MVP', 'Most Valuable Player', '最有价值球员', '日常', 'sports',
+    '体育赛事语境；产品语境的 MVP 是 Minimum Viable Product（最小可行产品）']
 ];
 
-/** 缩写 → 稳定 id，例如 'CI/CD' → 'b_ci-cd' */
+/** 缩写 → slug，例如 'CI/CD' → 'ci-cd' */
 function slugify(abbr) {
   return String(abbr)
     .toLowerCase()
@@ -180,21 +230,49 @@ function slugify(abbr) {
     .replace(/^-+|-+$/g, '');
 }
 
-// 防御性去重：同缩写只保留首次出现的一条，保证 id 唯一
+/** 行业 key 白名单；不在名单里的一律退回 'other'，保证 key 干净、id 可预测 */
+const INDUSTRY_KEYS = {};
+INDUSTRIES.forEach(function (d) { INDUSTRY_KEYS[d.key] = d; });
+
+function industryOf(row) {
+  const raw = String(row[4] || '').trim();
+  if (raw && INDUSTRY_KEYS[raw]) return raw;
+  const category = String(row[3] || '').trim();
+  return CATEGORY_INDUSTRY[category] || 'other';
+}
+
+/**
+ * 防御性去重：**唯一键是 (缩写, 行业)**，不是单独的缩写。
+ * 过去按缩写去重会把第二个含义直接丢掉（还不报错），这正是「一对多」被锁死的地方。
+ * 一旦同一缩写 + 同一行业出现两条，仍然要剔除后一条 —— id 会冲突，必须兜住。
+ */
 const _seen = {};
+const _dropped = [];
 const ITEMS = RAW.filter(function (row) {
   const abbr = String(row[0] || '').trim();
-  if (!abbr || _seen[abbr]) return false;
-  _seen[abbr] = true;
+  if (!abbr) return false;
+  const key = abbr.toUpperCase() + '@' + industryOf(row);
+  if (_seen[key]) {
+    _dropped.push(abbr + ' @ ' + industryOf(row));
+    return false;
+  }
+  _seen[key] = true;
   return true;
 }).map(function (row, index) {
   const abbr = String(row[0] || '').trim();
+  const industry = industryOf(row);
+  const note = String(row[5] || '').trim();
   return {
-    id: 'b_' + slugify(abbr),
+    // 复合主键：同一缩写的不同含义各有一条 id
+    id: 'b_' + slugify(abbr) + '__' + industry,
+    // 旧 id（只有缩写）—— 迁移存量收藏时用，见 utils/storage.js
+    legacyId: 'b_' + slugify(abbr),
     abbr: abbr,
     full: String(row[1] || '').trim(),
     zh: String(row[2] || '').trim(),
     category: String(row[3] || '其他').trim(),
+    industry: industry,
+    note: note,
     source: 'builtin',
     creator: '内置词条',
     createdAt: RELEASE_DATE,
@@ -203,9 +281,20 @@ const ITEMS = RAW.filter(function (row) {
   };
 });
 
+/** 同一缩写共有几个含义，供列表/详情展示「这个词还有 N 个含义」 */
+const MEANING_COUNT = {};
+ITEMS.forEach(function (it) {
+  const key = it.abbr.toUpperCase();
+  MEANING_COUNT[key] = (MEANING_COUNT[key] || 0) + 1;
+});
+
 module.exports = {
   VERSION: VERSION,
   RELEASE_DATE: RELEASE_DATE,
+  INDUSTRIES: INDUSTRIES,
+  CATEGORY_INDUSTRY: CATEGORY_INDUSTRY,
+  MEANING_COUNT: MEANING_COUNT,
+  DROPPED_DUP: _dropped,
   ITEMS: ITEMS,
   // 兼容两种引用写法
   items: ITEMS,
